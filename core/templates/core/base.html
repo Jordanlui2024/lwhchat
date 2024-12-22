@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    {% load static %}
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{% static 'images/logo.ico' %}"
+    />
+    <title class="notranslate toptitle">{% block title %}{% endblock %}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=platypi"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Exo 2"
+    />
+    {% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+    {% block style %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script
+      type="text/javascript"
+      src="{% static 'js/jquery-3.7.1.min.js' %}"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-xl navbar-custom">
+      <div class="container-fluid">
+        <div style="display: flex; flex-direction:row; margin-right: 100px">
+          <div style="border-radius: 10px; width: 40px; height: 40px">
+            <image
+              src="{% static 'images/logo.png' %}"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+          <a class="navbar-brand-custom notranslate" href="/">CODECHAT</a>
+        </div>
+
+        <button
+          class="navbar-toggler"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <i class="material-icons notranslate" style="color: white">dehaze</i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <div class="menu_item">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <div class="outer button">
+                  <a href="{% url 'homePage' %}">Home Page</a>
+                  <span></span>
+                  <span></span>
+                </div>
+              </li>
+ 
+              <li class="nav-item">
+                 <div class="outer button">
+                   <a href="{% url 'forumListPage' page=1 %}">Forum</a>
+                   <span></span>
+                   <span></span>
+                 </div>
+               </li>
+               {% if request.user.is_authenticated %}
+
+               <li class="nav-item">
+                 <div class="outer button">
+                   <a href="{% url 'roomsPage' %}">Chat Room</a>
+                   <span></span>
+                   <span></span>
+                 </div>
+               </li>
+
+               <li class="nav-item">
+                <div class="outer button">
+                  <a href="{% url 'ebookListPage' %}">Ebook</a>
+                  <span></span>
+                  <span></span>
+                </div>
+              </li>
+               {% endif %}
+              <li class="nav-item">
+                <div class="outer button">
+                  <a href="{% url 'videoListPage' %}"
+                    >Video</a
+                  >
+                  <span></span>
+                  <span></span>
+                </div>
+              </li>
+ 
+              <li class="nav-item">
+                <div class="outer button">
+                  <a href="{% url 'contactusPage' %}">Contact Us</a>
+                  <span></span>
+                  <span></span>
+                </div>
+              </li>             
+              {% comment %} <li class="nav-item">
+                <div class="outer button">
+                  <a href="{% url 'homePage' %}">About</a>
+                  <span></span>
+                  <span></span>
+                </div>
+              </li> {% endcomment %}
+            </ul>
+        </div>
+
+ 
+          <div class="logbutton">
+            {% if request.user.is_authenticated %}
+                <form method="POST" action="{% url 'logoutPage' %}">
+                  {% csrf_token %}
+                    <button class="btn btn-primary logoutbtn">Logout</button>
+                </form>
+            {% else %} 
+              
+               <a href="{% url 'loginPage' %}" class="btn btn-primary loginbtn">Login</a>
+               <a href="{% url 'signupPage' %}" class="btn signupbtn">Signup</a>
+
+            {% endif %}
+          
+          </div>
+                  <div class="googlecontainer">
+                    <div class="languagetxt">Language :</div>
+                    <div id="google_translate_element" style="width:100px"></div>      
+                  </div>
+        </div> 
+      </div>
+    </nav>
+    {% if request.user.is_authenticated %}
+    <div class="welcome notranslate">
+      Welcome: 
+      {{request.user.username | title}}
+    </div>
+    {% endif %} 
+     
+    <div class="container"> 
+      {% if request.user.is_authenticated %}
+      <div class="welcome-user">
+        <span id="joiners"></span>
+      </div>
+      {% endif %} 
+
+
+      {% block content %}{% endblock %}
+    </div>
+
+    {% block animate %}{% endblock %}
+
+    <div class="line line-1">
+      <div
+        class="wave wave1"
+        style="background-image: url({%static 'images/1.png'%})"
+      ></div>
+    </div>
+    <div class="line line-2">
+      <div
+        class="wave wave2"
+        style="background-image: url({%static 'images/2.png'%})"
+      ></div>
+    </div>
+    <div class="line line-3">
+      <div
+        class="wave wave3"
+        style="background-image: url({%static 'images/3.png'%})"
+      ></div>
+    </div>
+  </body>
+
+  
+  {% block script %}{% endblock %}
+  </html>
+  
+  <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {pageLanguage: 'en', 
+           includedLanguages:'en,zh-CN,zh-TW,th,ja,ko,it',
+           layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 
+          'google_translate_element');
+      }
+    </script>
+  
+  
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

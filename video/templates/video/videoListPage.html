@@ -1,0 +1,34 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Video List{% endblock %} 
+{% block style %}
+<style>
+    body {
+      font-family:"Exo 2", sans-serif; 
+      background-image: linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+      color:white
+    }
+</style>    
+{% endblock %}
+{% block content %}
+<div class="content">
+  <div class="toptitle">Video Tutorials</div>
+  <div class="videolist">
+  {% for video in videoList %}
+  <div class="card videocard" style="width: 18rem; color:black">
+    <a href="{% url 'videoPage' video.slug %}" class="notranslate">
+    <div class="videologo">
+    <img src="{{video.image.url}}" alt="image" width=60px/>
+    </div> 
+    <div class="card-title">{{video.name}}</div>
+    </a>
+
+      <p class="card-text">{{video.description}}</p>
+      <a href="{% url 'videoPage' video.slug %}" class="btn btn-primary videobtn">Go to Video List</a>
+    
+  </div>
+  {% endfor %}
+  </div>
+  <br/>
+</div> 
+{% endblock %}

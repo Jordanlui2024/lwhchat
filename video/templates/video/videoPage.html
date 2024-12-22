@@ -1,0 +1,40 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Video Tutorials{% endblock %} 
+{% block style %}
+<style>
+    body {
+        font-family:"Exo 2", sans-serif; 
+        background:linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+        color:white
+      }
+    
+</style>    
+{% endblock  %}
+{% block content %}
+<div class="content">
+    
+    <a href="{% url 'videoListPage' %}" class="backslack">
+            <div class='toptitle'>
+            <i class="material-icons notranslate" style="font-size:30px; color:white; margin-right:30px">keyboard_backspace</i>
+            <div><span class="notranslate">Youtube </span>Tutorials</div>
+           </div>
+    </a>
+   
+        <div class="videocontent">
+        {% for youtube in youtubes %}
+            <div class="videobox">
+                <iframe width="100%" height="200" 
+                src="{{youtube.link}}" 
+                title="{{youtube.title}}" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen></iframe>
+                {{youtube.title}}
+            </div>
+        {% endfor %}
+        </div>
+</div>
+
+{% endblock  %}

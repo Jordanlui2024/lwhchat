@@ -1,0 +1,145 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Forum Article{% endblock %} 
+{% block style %}
+<style>
+    body {
+        font-family:"Exo 2", sans-serif; 
+        background:linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+        color:white
+      }
+</style>    
+{% endblock  %}
+{% block content %}
+{{ form.media }}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Record</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="delete-text">
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirmdel" data-bs-dismiss="modal">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content">
+ {% if forumlist.count == 0 %}
+ <div class="toptitle">
+  <div class="topicback">
+    <a href="{% url 'forumListPage' page=1 %}" id="backstack">  
+    <- no record
+    </a>
+  </div>
+ </div>  
+
+ {% else %}
+  <div class="toptitle">
+    <div class="topicback">
+      <a href="{% url 'forumListPage' page=1 %}" id="backstack">  
+      <-<span class="notranslate">{{request.user.username | capfirst}}</span> Forum
+      </a>
+    </div>
+  
+  </div>  
+    <table class="table tableforum">
+        <thead>
+          <tr>  
+            <th scope="col" style="background-color:rgb(34, 131, 34); color:white">
+
+              <h5 style="margin-top:8px">
+              Topics
+              </h5>
+            </th>
+          </tr>
+        </thead>
+    
+          <tbody>
+             {% for forum in forumlist %}
+              <tr>
+             
+                <td scope="row" style="padding:15px 15px 15px 20px; min-height:400px; text-align:initial">
+                 
+                   <div class="forumlistcontent">
+                    <div style="float:right">Post Date: {{forum.publication_date | date:"y-m-d h:i a"}}</div>
+                    <div class="titleforum" id="title{{forum.id}}">{{forum.title}}</div>
+                    <br/><br/>
+                    <div class="ck-content">
+                        {{forum.content|safe}}
+                    </div>
+                    <br/><br/>
+                    <div class="forumdetail">
+                      <span><button class="btn btn-danger delconfirm" deltitle="{{forum.id}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete Article</button></span>
+                      
+                      <form action="." method="POST">
+                        {% csrf_token %}
+                        <input text="text" name="forumid_edit" value="{{forum.id}}" style="display:none"/>
+                        <span><button class="btn btn-success">Edit Article</button></span>
+                      </form>
+                    </div>
+                  </div>
+                </td> 
+              </tr>
+              {% endfor %}
+            </tbody>  
+          </table>
+          <form action="." id="deleterec" method="POST">
+            {% csrf_token %}
+            <input text="text" name="forumid_del" id="forumid" style="display:none"/>
+          </form>
+</div>
+<br/>
+<br/>
+{% if updateid %}  
+<div class="postforum">
+<div class="postrely">
+  <span>Post a topic</span>
+</div>
+<form method="POST" action=".">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+  <input type="number" name="id" value={{updateid}}  style="display:none"/>
+  <button class="btn btn-primary" style="margin-right:80px">Submit</button>
+  <a href={% url "articlePage"%} class="btn btn-secondary">Undo</a>
+</form>
+</div>
+<br/>
+<br/>
+<script>
+$(function(){
+  $('html, body').animate({
+    scrollTop: $(document).height()
+  }, 500);
+})
+
+</script>
+{% endif %}
+</div>
+{% endif %}
+{% endblock %}       
+
+
+{% block script %}
+<script>
+$(function(){
+  var titleid = "";
+  $(".delconfirm").on("click", function(){
+     titleid = $(this).attr("deltitle");
+     var title = $("#title"+titleid).html();
+     $("#delete-text").html('Are you sure you want to delete "' +title + '" ?');
+  })
+  $("#confirmdel").on("click", function(){
+     $("#forumid").val(titleid);
+     $("#deleterec").submit()
+  })
+
+})
+</script>
+{% endblock  %}

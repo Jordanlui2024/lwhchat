@@ -1,0 +1,182 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}{{room.name}}{% endblock %} 
+{% block style %}
+<style>
+   body {
+     font-family:"Exo 2", sans-serif;
+     background-image: linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%);
+   }
+ </style>
+{% endblock  %}
+{% block content %}
+<div class="chatcontainer">
+  
+  
+  <div class="card chatroom">
+    
+    <div class="topic notranslate" >
+     
+        <a href="{% url 'roomsPage' %}" class="backarrow">
+        <i class="material-icons" style="color:black; font-size:35px; margin-top:5px">keyboard_backspace</i>
+        </a>
+    
+      <div>
+        <image src="{{room.image.url}}" style="width:45px; margin-right:10px"/>
+        {{room.name}}
+      </div>
+      <div></div>
+      {% comment %} <div id="google_translate_element" class="google"></div> {% endcomment %}
+       
+    </div>
+
+    <div class="chatcontent" id="chat-messages">
+      {% for m in messages %}
+         {% if request.user.username == m.user.username %}
+        <div class="iam_say">
+          <div class="btn bubble">
+            {{m.content}}<br/>
+            <span>{{m.date_added|date:"H:i"}}</span>
+          </div>  
+        </div>
+         {% else %}
+
+        <div class="user_say">
+          <div class="btn ububble">
+          <span>{{m.user.username}}:</span>
+           {{m.content}}
+          <span>{{m.date_added|date:"H:i"}}</span>
+          </div>
+        </div>
+
+         {% endif %}
+      {% endfor %}   
+    </div> 
+    <form message="post" action=".">
+        <div class="input-group chatbar">
+      <input type="text" class="form-control" placeholder="Enter your message" id="chat-message-input">
+      <button class="input-group-text" id="chat-message-submit"><i class="material-icons icons" style="font-size:33px">&#xe039;</i></button>
+    </div>
+      </form>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+{{room.slug|json_script:"json-roomname"}}
+{{request.user.username|json_script:"json-username"}}
+
+{% comment %} <script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      {pageLanguage: 'en, zh-CN', 
+       includedLanguages:'en,zh-CN,zh-TW,ja,ko',
+      layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 
+      'google_translate_element');
+  }
+  </script>
+
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> {% endcomment %}
+
+<script type="text/javascript">  
+  const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+  const userName = JSON.parse(document.getElementById('json-username').textContent);
+  console.log(location.protocol)
+  var ws = "ws://";
+  if(location.protocol == 'https:'){
+    ws = "wss://"
+  }
+  const chatSocket = new WebSocket(
+    ws
+    + window.location.host
+    + '/ws/'
+    + roomName
+    + '/'
+    + userName
+    + '/'
+    
+    );
+
+    chatSocket.onclose = function(e) {
+      console.log('onclose')
+    }
+  
+    chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      if (data.message) {
+        if(userName == data.username){
+          $('#chat-messages').append('<div class="iam_say"><div class="btn bubble">'+ data.message +'<br/><span>'+ data.date +'</span></div></div>');  
+        }else{
+          $('#chat-messages').append('<div class="user_say"><div class="btn ububble"><span>'+ data.username +':</span>'+data.message+'<span>'+data.date+'</span></div></div>');  
+        
+        }
+      }
+      if (data.joiners){
+            console.log("joiners", JSON.stringify(data.joiners))
+            console.log(data.joiners.length)
+            var users = "";
+            for(joiner in data.joiners){
+               users = users+"<div class='username'>"+data.joiners[joiner]+"</div>";
+            }
+            $("#joiners").html(users)
+          
+      }
+  
+      scrollToBottom();
+    };
+  
+
+  
+  $(function(){
+
+    $('#chat-message-input').focus();
+    $('#chat-message-input').on('keyup', function(e) {
+        if (e.keyCode === 13) {
+            $('#chat-message-submit').click();
+        }
+    });
+
+    $('#chat-message-submit').on('click',function(e) {
+        e.preventDefault()
+
+        const message = $('#chat-message-input').val();
+       
+        console.log({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        })
+
+        if(message.length > 0){
+          chatSocket.send(JSON.stringify({
+              'message': message,
+              'username': userName,
+              'room': roomName
+          }));
+          $("#chat-message-input").val("")
+        }
+
+
+        return false
+    });
+
+})    
+
+
+
+/**
+* A function for finding the messages element, and scroll to the bottom of it.
+*/
+function scrollToBottom() {
+    var $target = $("#chat-messages");
+    $target.animate({scrollTop: $target.prop('scrollHeight')}, 'slow');
+}
+
+// Add this below the function to trigger the scroll on load.
+scrollToBottom();
+</script>   
+{% endblock  %}

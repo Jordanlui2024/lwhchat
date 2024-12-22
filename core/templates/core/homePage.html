@@ -1,0 +1,276 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block style %}
+<style>
+  body {
+    font-family:"Exo 2", sans-serif; 
+    background-image: url("{% static 'images/home.png' %}"), linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+    background-repeat: no-repeat;
+    background-size:cover
+    
+  }
+   .boxs div{
+      position: absolute;
+      width:60px;
+      height:60px;
+      background-color:transparent;
+      border: 6px solid rgba(255,255,255,0.8)
+    }
+    .boxs div:nth-child(1){
+      top:12%;
+      left:42%;
+      animation: animate 10s linear infinite;
+    }
+    .boxs div:nth-child(2){
+      top:70%;
+      left:50%;
+      animation:animate 7s linear infinite;
+    }
+    .boxs div:nth-child(3){
+      top:17%;
+      left:6%;
+      animation:animate 9s linear infinite;
+    }
+    .boxs div:nth-child(4){
+      top:20%;
+      left:60%;
+      animation:animate 10s linear infinite;
+    }
+    .boxs div:nth-child(5){
+      top:67%;
+      left:10%;
+      animation:animate 6s linear infinite;
+    }
+    .boxs div:nth-child(6){
+      top:80%;
+      left:70%;
+      animation:animate 12s linear infinite;
+    }
+    .boxs div:nth-child(7){
+      top:60%;
+      left:80%;
+      animation:animate 15s linear infinite;
+    }
+    .boxs div:nth-child(8){
+      top:32%;
+      left:25%;
+      animation:animate 16s linear infinite;
+    }
+    .boxs div:nth-child(9){
+      top:90%;
+      left:25%;
+      animation:animate 9s linear infinite;
+    }
+    .boxs div:nth-child(10){
+      top:20%;
+      left:80%;
+      animation:animate 5s linear infinite;
+    }
+    
+    @keyframes animate{
+      0%{
+         transform: scale(0) translateY(0) rotate(0);
+         opacity:1;   
+      }
+      100%{
+        transform: scale(1.3) translateY(-90px) rotate(360deg);
+        opacity:0;   
+      }
+    }
+ </style>
+{% endblock  %}
+{% block animate %}
+<div class="boxs">
+  <div></div> 
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+   
+  <div class="leftrow">
+ 
+      <div class="leftcontent homecontent">
+         <h1 class="welcometitle"><span>Welcome to CodeChat</span></h1>
+         <br/>
+         We offer real-time chat, video tutorials, and an active discussion forum. Whether you’re a beginner or an experienced expert, you’ll find the resources you need here:
+         {% if request.user.is_authenticated == False %}      
+         <button class="btn btn-primary loginus">Login</button>
+         {% endif %}
+         <br/><br/>
+         <h3>Real-time Chat:</h3>
+         <ul>
+          <li>Connect with developers from around the world.</li>
+          <li>Share code and receive instant feedback.</li>
+          <li>Join various technical topic chat rooms.</li>
+         </ul>
+         <br/>       
+         <h3>Video Tutorials:</h3>
+         <ul>
+          <li>Explore our extensive video library to learn new skills.</li>
+          <li>Covering everything from basics to advanced topics, across different programming languages and development tools.</li>
+          <li>Follow expert guidance to build your projects step by step.</li>
+         </ul>
+         <br/> 
+         <h3>Discussion Forum:</h3>
+         <ul>
+          <li>Engage in discussions on popular tech topics.</li>
+          <li>Post your questions and collaborate with community members to find solutions.</li>
+          <li>Share your projects and get advice and inspiration.</li>
+         </ul> 
+         <br/> 
+         Join us and kickstart your coding journey! 
+         {% if request.user.is_authenticated == False %}  
+         <button class="btn pinkbtn joinus">Signup</button>
+         {% endif %}
+
+      </div>
+    
+      <div class="card leftcontent login">
+          <div class="card-body">
+              <div class="topics">Login</div>
+              <form method="post" action="/login/">
+                  {% csrf_token %}
+                  <div class="input-group mb-3">
+                      <span class="input-group-text" id="inputGroup-sizing-default"><i class="material-icons icons notranslate" style="font-size:33px">perm_identity</i></span>
+                      <input type="text" class="form-control" name="username" placeholder="Username">
+                  </div>
+                  <br class="seperator" />
+                  <div class="input-group mb-3">
+                      <span class="input-group-text" id="inputGroup-sizing-default"><i class="material-icons icons notranslate" style="font-size:33px">lock_outline</i></span>
+                      <input type="password" class="form-control" name="password" placeholder="Password">
+                  </div>
+                  <div style="display:flex; justify-content:center">
+                  <p class="sm-topics">Don't have an account? <a href="#" class="joinus loginjoin">Signup</a> </p>
+                  </div>
+                  <br class="seperator" />
+                  {% if messages %}
+                
+                  {% for message in messages %}
+                  <div  class="error_messages">{{ message }}</div>
+                  {% endfor %}
+                  
+                {% endif %}
+                  <div style="width:100%; display:flex; justify-content:flex-end">
+                  <button class="btn btn-primary defaultbtn" style="width:100%; height:50px ; background-color:black; border-color:gray">Login</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+   
+      <div class="card leftcontent signup">
+         <div class="card card-custom">
+            <div class="card-body">
+                <div class="topics">Signup</div>
+                <form method="post" action="/signup/">
+                        {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-default"><i class="material-icons icons notranslate" style="font-size:33px">perm_identity</i></span>
+                        <input type="text" class="form-control" name="username" placeholder="Username">
+                    </div>
+                    <br class="seperator" />
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-default"><i class="material-icons icons notranslate" style="font-size:33px">lock_outline</i></span>
+                        <input type="password" class="form-control" name="password1" placeholder="Password">
+                    </div>
+                    <br class="seperator" />
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-default"><i class="material-icons icons notranslate" style="font-size:33px">lock_outline</i></span>
+                        <input type="password" class="form-control" name="password2" placeholder="Repeat Password">
+                    </div>
+                    <div style="display:none"><input type="checkbox" name="is_staff" checked/></div>
+                    <div style="display:flex; justify-content:center">
+                    <p class="sm-topics">Already have an account? <a href="#" class="loginus loginjoin">Login</a> </p>
+                    </div>
+                    <br class="seperator" />
+                    <div style="color:#ffff00">
+                    {% if form.errors %}
+                       <p class="warning"></p>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div>
+                                    <p>{{error|escape}}</p>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}   
+                    </div>
+                    <br class="seperator" />     
+                    <div style="width:100%; display:flex; justify-content:flex-end">
+                        <button class="btn btn-primary defaultbtn" style="width:100%; height:50px ; background-color:black; border-color:gray">Signup</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+  </div>  
+  <br/>
+  <br/>
+</div>
+{% endblock %}
+
+{% block script %}
+{{room.slug|json_script:"json-roomname"}}
+<script>
+ var page = "{{page}}"; 
+
+
+function showhome(){
+  $(".login").hide();
+  $(".signup").hide();
+  $(".homecontent").show("slow","swing");
+  $(".toptitle").html("Home");
+}
+function showjoin(){
+  $(".homecontent").hide();
+  $(".signup").hide();
+  $(".login").show("slow","swing");
+  $(".toptitle").html("Login");
+}
+function showsignup(){
+  $(".homecontent").hide();
+  $(".login").hide();
+  $(".signup").show("slow","swing");
+  $(".toptitle").html("Signup")
+}
+
+
+ $(function(){
+   $(".welcometitle").fadeIn(1000);
+   if(page=="signup"){
+      showsignup();
+   }else if(page=="login"){
+      showjoin();
+   }else{
+      showhome();
+   }
+
+   $(".joinus").on("click", function(){
+      $(".homecontent").hide();
+      $(".login").hide();
+      $(".signup").show("slow","swing");
+      $(".toptitle").html("Signup");
+   })
+   $(".loginus").on("click", function(){
+      $(".homecontent").hide();
+      $(".signup").hide();
+      $(".login").show("slow","swing");
+      $(".toptitle").html("Login");
+   })
+});
+</script>
+
+{% endblock  %}
+
+
+ 

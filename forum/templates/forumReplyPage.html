@@ -1,0 +1,113 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Reply{% endblock %} 
+{% block style %}
+<style>
+    body {
+        font-family:"Exo 2", sans-serif; 
+        background:linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+        color:white
+      }
+    
+</style>    
+{% endblock  %}
+{% block content %}
+<div class="content">
+  <div class="toptitle">
+
+    <div class="topicback">
+      <a href="{% url 'forumListPage' page=page %}" id="backstack">  
+        <- Forum Reply
+      </a>
+    </div>
+   
+  
+  </div>  
+  <table class="forumreply table">
+    <thead>
+      <tr>
+        <th scope="col">
+          <div class="replytopic">
+          {{forum.title}}
+          </div>
+        </th>
+      </tr>
+    </thead>
+
+      <tbody>
+        <tr style="height:80px; vertical-align:middle">
+          {% comment %} <td scope="row" class="username notranslate">{{forum.author.username|capfirst}}</td> {% endcomment %}
+          <td>
+             <div class="forumcontent">
+              <div class="forumdetail" style="justify-content:space-between">
+               <span> User: <span class="notranslate" style="font-size:16px">{{forum.author.username|capfirst}}</span></span>
+               <span>Post Date : {{forum.publication_date|date:"y-m-d h:i a"}}</span>
+              </div>
+               <div class="ck-content">
+                {{forum.content|safe}}
+              </div>
+              <div class="forumdetail">
+                <span>Replies : {{forum.replies}}</span>
+                <span>Views :{{forum.views}}</span>
+              </div>
+            </div>
+          </td> 
+        </tr>
+      </tbody>
+    </table>
+    
+    <table class="forumreply table">
+        <tbody>
+        {% for reply in replylist %}
+        <tr style="height:80px; vertical-align:middle">
+
+          <td>
+
+             <div class="forumcontent">
+               <div class="forumdetail" style="justify-content:space-between">
+                   {% comment %} <span>Like:{{reply.like}}</span>
+                   <span>Unlike:{{reply.unlike}}</span> {% endcomment %}
+                   <span class="user{{reply.author.pk}}">Reply:  <span class="notranslate" style="font-size:16px">{{reply.author.username|capfirst}}</span></span>
+                   <span>Post Date : {{reply.publication_date|date:"y-m-d h:i a"}}</span>
+               </div> 
+
+               <br/>
+
+              <div class="ck-content">
+                {{reply.content|safe}}
+              </div>
+            </div>
+          </td> 
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>  
+    {% if request.user.is_authenticated == True %}  
+    <div class="postforum">
+      <a href="{% url 'updateReplyPage' forum_id=forum_id page=page %}" class="btn btn-warning replylist" style="float:right; display:none">List your replies</a>
+      <div class="postrely">Post a reply</div>
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button class="btn btn-primary">Submit</button>
+      </form>
+      </div>
+      {% else %}
+      <a href={% url 'loginPage' %} class="btn btn-primary">Login for create this forum reply</a>
+      {% endif %}
+</div>
+<br/><br/>
+{% endblock %}
+{% block script %}
+<script>
+$(function(){
+  var userid = "user"+{{request.user.pk}};
+  var num = $("."+userid).length;
+  if(num > 0){
+    $(".replylist").show()
+  }
+})  
+
+</script>
+{% endblock %}

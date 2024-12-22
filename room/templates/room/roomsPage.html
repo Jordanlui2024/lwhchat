@@ -1,0 +1,103 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}room{% endblock %} 
+{% block style %}
+<style>
+   body {
+    font-family:"Exo 2", sans-serif; 
+    background: linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+   }
+  
+ </style>
+{% endblock  %}
+{% block content %}
+<div class="content">
+  <div class="toptitle">Chat Room</div>  
+<div class="roomlist"> 
+{% for room in rooms %}
+<div class="box">
+  <span>
+    <div class="title notranslate">  
+      <img src="{{room.image.url}}" width="45" height="45" style="margin-right:10px">
+    
+      <div>{{room.name}}</div>
+    </div> 
+
+    <p class="box-text" id="{{room.slug}}">chat member: 0</p>
+    <a href="{% url 'chatroomPage' room.slug %}" class="btn blackcolor" style="width:100%">Join</a>
+  </span>
+</div> 
+
+{% endfor %} 
+</div>
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+{{request.user.username|json_script:"json-username"}}
+<script type="text/javascript">
+ const userName = JSON.parse(document.getElementById('json-username').textContent);
+ 
+ {% comment %} function screenResize(){
+    console.log($(window).width());
+    winwidth = $(window).width();
+
+  
+    if(1175 > winwidth){
+      if($("#bubblespan").hasClass("bubbles")){
+        console.log("remove class");
+        $("#bubblespan").removeClass("bubbles");
+      }
+    }else{
+      if(!$("#bubblespan").hasClass("bubbles")){
+        console.log("add class");
+        $("#bubblespan").addClass("bubbles");
+      }
+    } 
+ } {% endcomment %}
+
+
+ $(function(){
+    /*screenResize();
+    $(window).resize(screenResize);
+    */
+
+    $(".box").on("mouseenter",function(){
+      $(this).addClass("showcard");
+    }).on("mouseleave", function(){
+      $(this).removeClass("showcard");
+    })
+
+    $(".cardroom").slideDown("slow");
+
+    var ws = "ws://";
+    if(location.protocol == 'https:'){
+      ws = "wss://";
+    }
+    const rooms = new WebSocket(
+      ws
+      + window.location.host
+      + '/ws/rooms_count/'
+      + userName
+      + '/'
+    )
+
+    rooms.onclose = function(e){
+      console.log("onclose");
+    }
+
+    rooms.onmessage = function(e){
+      const data = JSON.parse(e.data);
+      //console.log(JSON.stringify(data.count))
+      if(Object.keys(data).length > 0){
+        for(let key in data.count){
+          
+          $("#"+key).html("Joiner:"+data.count[key]);
+        }
+      }
+    }
+ });
+</script>   
+{% endblock  %}

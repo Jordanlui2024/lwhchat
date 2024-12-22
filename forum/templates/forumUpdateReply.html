@@ -1,0 +1,157 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}update reply{% endblock %} 
+{% block style %}
+<style>
+    body {
+        font-family:"Exo 2", sans-serif; 
+        background:linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+        color:white
+      }
+    
+</style>    
+{% endblock  %}
+{% block content %}
+{{forumreply.count}}
+
+{{form.media }}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Record</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="delete-text">
+         Please confirm delete this record ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirmdel" data-bs-dismiss="modal">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  {% if forumreply.count == 0 %}
+
+  <div class="toptitle">
+    <div class="topicback">
+      <a href="{% url 'forumReplyPage' forum_id=forum_id page=page %}" id="backstack">  
+        <- no record 
+      </a>
+    </div>
+  
+  </div> 
+  {% else %}
+
+
+  <div class="toptitle">
+    <div class="topicback">
+      <a href="{% url 'forumReplyPage' forum_id=forum_id page=page %}" id="backstack">  
+        <- <span class="notranslate"> {{request.user.username| capfirst}} </span> Forum Reply
+      </a>
+    </div>
+  </div>  
+  <table class="forumreply table">
+    <tr class="updatereply_banner">
+      <td class="topicname">
+        <div style="width:100%; text-align:right; padding-right:25px">Author : <span class="notranslate">{{forumreply.0.forum.author.username|capfirst}}</span></div>
+        <div class="replytopic">Topic : {{forumreply.0.forum.title}}</div>
+      </td>
+    </tr>  
+    <tr>  
+      <td>    
+          <div class="forumcontent">
+          <div class="ck-content">
+            {{forumreply.0.forum.content|safe}}
+          </div>
+          <div class="forumdetail">
+            <span>Replies : {{forumreply.0.forum.replies}}</span>
+            <span>Views :{{forumreply.0.forum.views}}</span>
+            <span>Date : {{forumreply.0.forum.publication_date|date:"y-m-d h:i a"}}</span>
+          </div>
+        </div>
+      </td> 
+    </tr>
+  </table>
+  <table class="forumreply table">  
+    <tr>
+      <td class="topicname">
+        <div style="width:100%; text-align:right; padding-right:25px">Reply :<span class="notranslate"> {{forumreply.0.author.username|capfirst}}</span></div>
+      </td>
+    </tr>  
+    {% for reply in forumreply %}
+    <tr style="height:80px; vertical-align:middle">
+   
+      <td>
+        <div class="post_date">Post Date : {{reply.publication_date|date:"y-m-d h:i a"}}</div>
+         <div class="forumcontent">
+          <div class="ck-content">
+            {{reply.content|safe}}
+          </div>
+          <div class="forumdetail">
+            
+            <span><button class="btn btn-danger delreply" delreply="{{reply.id}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Delete Article</button></span>
+            
+            <form action="." method="POST">
+              {% csrf_token %}
+              <input text="text" name="replyid_edit" value="{{reply.id}}" style="display:none"/>
+              <span><button class="btn btn-success">Edit Article</button></span>
+            </form>
+
+          </div> 
+        </div>
+      </td> 
+    </tr>
+    {% endfor %}
+  </table>
+
+  <form action="." id="deleterec" method="POST">
+    {% csrf_token %}
+    <input text="text" name="replyid_del" id="replyid" style="display:none"/>
+  </form>
+  <br/>
+  <br/>
+
+{% if updateid %}  
+<div class="postforum">
+  <div class="postrely">Post a reply</div>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+    <input type="number" name="id" value={{updateid}} style="display:none"/>
+    <button class="btn btn-primary">Submit</button>
+  </form>
+</div>
+<script>
+  $(function(){
+    $('html, body').animate({
+      scrollTop: $(document).height()
+    }, 500);
+  })
+  
+  </script>
+{% endif %}
+
+{% endif %}
+</div>
+<br/><br/>
+{% endblock%} 
+
+{% block script %}
+<script>
+$(function(){
+  var replyid = "";
+  $("#confirmdel").on("click", function(){
+    replyid = $(".delreply").attr("delreply");
+    $("#replyid").val(replyid);
+    $("#deleterec").submit();
+  })
+})
+</script>
+
+{% endblock  %}
+

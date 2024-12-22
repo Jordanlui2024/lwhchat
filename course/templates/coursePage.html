@@ -1,0 +1,35 @@
+{% extends "core/base.html" %} 
+{% load static %}
+{% block title %}Ebooks{% endblock %} 
+{% block style %}
+<style>
+    body {
+        font-family:"Exo 2", sans-serif; 
+        background:linear-gradient(180deg, rgba(2,0,.6,1) 0%, rgba(9,9,121,1) 40%,  rgb(13, 40, 163) 100%); 
+        color:white
+      }
+</style>    
+{% endblock  %}
+{% block content %}
+<div class="content">
+ <div class="course_content"> 
+  <div class="toptitle">
+    <div class="topicback">
+     
+        E-book
+
+    </div>
+  </div>
+ {% for course in data %}
+ <div class="course_detail">
+   <img src="{{course.image.url}}" width="150px" />
+   <div class="course_text">
+   <h5>{{course.name}}</h5>
+    <p>{{course.description}}</p>
+    <a href="{% url "downloadPage" course.pk %}">Download</a>
+   </div>
+</div>
+ {% endfor %}
+ </div>
+</div>
+{% endblock %}
