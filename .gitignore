@@ -49,8 +49,9 @@ Thumbs.db
 *.wmv
 
 djangochat/.env
-
-staticfile/
-requirements.txt
+.env_prod
+*.pyc
+__pycache__/
 db.sqlite3
 media/
+staticfile/
